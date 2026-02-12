@@ -166,6 +166,346 @@ dto
 | PATCH  | /api/schedules/{id} | 수정             |
 | DELETE | /api/schedules/{id} | 삭제             |
 
+
+---
+
+# 📘 API Specification
+
+## 📌 공통 정보
+
+* **Base URL**: `http://localhost:8080`
+* **Content-Type**: `application/json`
+* **Authentication**: Session 기반 (`JSESSIONID` 쿠키 사용)
+* **Date Format**: `yyyy-MM-dd'T'HH:mm:ss`
+
+---
+
+# 🔐 Authentication API
+
+---
+
+## 1️⃣ 로그인
+
+### POST `/api/auth/login`
+
+### Description
+
+이메일과 비밀번호를 통해 로그인합니다.
+로그인 성공 시 서버에서 세션을 생성하고 `JSESSIONID` 쿠키를 발급합니다.
+
+### Authentication
+
+❌ 필요 없음
+
+### Request Body
+
+```json
+{
+  "email": "jimin@test.com",
+  "password": "1234"
+}
+```
+
+### Response
+
+#### ✅ 200 OK
+
+* Header:
+
+  ```
+  Set-Cookie: JSESSIONID=xxxxxxxx
+  ```
+
+```json
+"LOGIN_OK"
+```
+
+#### ❌ 400 Bad Request
+
+```json
+{
+  "message": "이메일 또는 비밀번호가 일치하지 않습니다."
+}
+```
+
+---
+
+## 2️⃣ 로그아웃
+
+### POST `/api/auth/logout`
+
+### Description
+
+현재 로그인 세션을 무효화합니다.
+
+### Authentication
+
+✅ 로그인 필요
+
+### Response
+
+#### ✅ 200 OK
+
+```json
+"LOGOUT_OK"
+```
+
+---
+
+# 👤 User API
+
+---
+
+## 1️⃣ 회원가입 (유저 생성)
+
+### POST `/api/users`
+
+### Description
+
+새로운 사용자를 등록합니다.
+
+### Authentication
+
+❌ 필요 없음
+
+### Request Body
+
+```json
+{
+  "username": "jimin",
+  "email": "jimin@test.com",
+  "password": "12345678"
+}
+```
+
+### Response
+
+#### ✅ 200 OK
+
+```json
+{
+  "id": 1,
+  "username": "jimin",
+  "email": "jimin@test.com",
+  "createdAt": "2026-02-12T12:00:00",
+  "updatedAt": "2026-02-12T12:00:00"
+}
+```
+
+#### ❌ 400 Bad Request
+
+* 이메일 형식 오류
+* 필수값 누락
+
+#### ❌ 409 Conflict
+
+* 이메일 중복
+
+---
+
+## 2️⃣ 유저 전체 조회
+
+### GET `/api/users`
+
+### Description
+
+등록된 모든 유저 목록을 조회합니다.
+
+### Authentication
+
+❌ 필요 없음
+
+### Response
+
+#### ✅ 200 OK
+
+```json
+[
+  {
+    "id": 1,
+    "username": "jimin",
+    "email": "jimin@test.com",
+    "createdAt": "2026-02-12T12:00:00",
+    "updatedAt": "2026-02-12T12:00:00"
+  }
+]
+```
+
+---
+
+## 3️⃣ 유저 수정
+
+### PATCH `/api/users/{userId}`
+
+### Description
+
+유저 정보를 수정합니다.
+
+### Authentication
+
+(현재 구현 기준) ❌ 필요 없음
+※ 확장 시 로그인 사용자 본인만 수정 가능하도록 개선 예정
+
+### Request Body
+
+```json
+{
+  "username": "jimin2",
+  "email": "jimin2@test.com"
+}
+```
+
+### Response
+
+#### ✅ 200 OK
+
+```json
+{
+  "id": 1,
+  "username": "jimin2",
+  "email": "jimin2@test.com",
+  "createdAt": "2026-02-12T12:00:00",
+  "updatedAt": "2026-02-12T12:10:00"
+}
+```
+
+---
+
+# 📅 Schedule API
+
+---
+
+## 1️⃣ 일정 생성
+
+### POST `/api/schedules`
+
+### Description
+
+로그인된 사용자의 일정 생성
+
+### Authentication
+
+✅ 로그인 필요 (Session 기반)
+
+### Request Body
+
+```json
+{
+  "title": "세션 일정",
+  "content": "로그인 상태로 생성"
+}
+```
+
+### Response
+
+#### ✅ 200 OK
+
+```json
+{
+  "id": 1,
+  "userId": 1,
+  "username": "jimin",
+  "title": "세션 일정",
+  "content": "로그인 상태로 생성",
+  "createdAt": "2026-02-12T12:00:00",
+  "updatedAt": "2026-02-12T12:00:00"
+}
+```
+
+#### ❌ 401 Unauthorized
+
+```json
+{
+  "message": "로그인이 필요합니다."
+}
+```
+
+---
+
+## 2️⃣ 일정 전체 조회
+
+### GET `/api/schedules`
+
+### Description
+
+전체 일정 목록 조회
+
+### Authentication
+
+❌ 필요 없음
+
+### Response
+
+#### ✅ 200 OK
+
+```json
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "username": "jimin",
+    "title": "세션 일정",
+    "content": "로그인 상태로 생성",
+    "createdAt": "2026-02-12T12:00:00",
+    "updatedAt": "2026-02-12T12:00:00"
+  }
+]
+```
+
+---
+
+## 3️⃣ 일정 단건 조회
+
+### GET `/api/schedules/{scheduleId}`
+
+### Description
+
+특정 일정 조회
+
+### Authentication
+
+❌ 필요 없음
+
+---
+
+## 4️⃣ 일정 수정
+
+### PATCH `/api/schedules/{scheduleId}`
+
+### Description
+
+특정 일정 수정
+
+### Authentication
+
+(현재 구현 기준) ❌ 필요 없음
+※ 추후 작성자 본인만 수정 가능하도록 개선 예정
+
+### Request Body
+
+```json
+{
+  "title": "수정된 제목",
+  "content": "수정된 내용"
+}
+```
+
+---
+
+## 5️⃣ 일정 삭제
+
+### DELETE `/api/schedules/{scheduleId}`
+
+### Description
+
+특정 일정 삭제
+
+### Authentication
+
+(현재 구현 기준) ❌ 필요 없음
+추후 작성자 본인만 삭제 가능하도록 개선 예정
+
+
 ---
 
 # 📌 7. 인증 흐름
