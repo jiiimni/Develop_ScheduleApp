@@ -24,18 +24,14 @@ public class ScheduleService {
 
     // 일정 생성
     @Transactional
-    public ScheduleResponse create(ScheduleRequest request) {
+    public ScheduleResponse create(Long loginUserId, ScheduleRequest request) {
+        User user = userRepository.findById(loginUserId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다. id=" + loginUserId));
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "해당 유저가 존재하지 않습니다. id=" + request.getUserId()));
-
-        Schedule saved = scheduleRepository.save(
-                new Schedule(user, request.getTitle(), request.getContent())
-        );
-
+        Schedule saved = scheduleRepository.save(new Schedule(user, request.getTitle(), request.getContent()));
         return new ScheduleResponse(saved);
     }
+
 
     // 전체 조회
     @Transactional(readOnly = true)

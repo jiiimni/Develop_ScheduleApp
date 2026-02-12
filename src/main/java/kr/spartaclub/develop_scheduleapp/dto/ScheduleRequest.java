@@ -11,10 +11,6 @@ import lombok.Getter;
 @Getter
 public class ScheduleRequest {
 
-    @NotNull(message = "userId는 필수입니다.")
-    @Positive(message = "userId는 1 이상의 값이어야 합니다.")
-    private Long userId;
-
     @NotBlank(message = "title은 필수입니다.")
     private String title;
 

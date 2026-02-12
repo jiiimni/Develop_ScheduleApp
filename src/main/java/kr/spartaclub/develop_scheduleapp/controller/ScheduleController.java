@@ -1,6 +1,7 @@
 package kr.spartaclub.develop_scheduleapp.controller;
 
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpSession;
 import kr.spartaclub.develop_scheduleapp.dto.ScheduleRequest;
 import kr.spartaclub.develop_scheduleapp.dto.ScheduleResponse;
 import kr.spartaclub.develop_scheduleapp.dto.ScheduleUpdateRequest;
@@ -21,9 +22,16 @@ public class ScheduleController {
 
     // 일정 생성
     @PostMapping
-    public ResponseEntity<ScheduleResponse> create(@Valid @RequestBody ScheduleRequest request) {
-        return ResponseEntity.ok(scheduleService.create(request));
+    public ResponseEntity<ScheduleResponse> create(@RequestBody ScheduleRequest request, HttpSession session) {
+
+        Long loginUserId = (Long) session.getAttribute(AuthController.LOGIN_USER_ID);
+        if (loginUserId == null) {
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
+
+        return ResponseEntity.ok(scheduleService.create(loginUserId, request));
     }
+
 
     // 전체 조회
     @GetMapping
