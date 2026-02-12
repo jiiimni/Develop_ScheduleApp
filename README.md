@@ -66,6 +66,8 @@ User (1)  ----  (N) Schedule
 * user_id (FK)
 * created_at
 * updated_at
+<img width="428" height="373" alt="스크린샷 2026-02-13 오전 1 02 13" src="https://github.com/user-attachments/assets/ec1481d8-b1b5-45e8-b4a2-d05fec7777d0" />
+
 
 ---
 
