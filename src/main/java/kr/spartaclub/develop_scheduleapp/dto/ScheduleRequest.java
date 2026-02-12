@@ -1,0 +1,20 @@
+package kr.spartaclub.develop_scheduleapp.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+
+
+// 일정 생성 요청 DTO
+// Entity 직접 받지 않고 DTO로 받는 이유: 보안/유지보수/필드 통제(원하지 않는 값 들어오는 것 방지)
+@Getter
+public class ScheduleRequest {
+
+    @NotBlank(message = "username은 필수입니다.")
+    private String username;
+
+    @NotBlank(message = "title은 필수입니다.")
+    private String title;
+
+    @NotBlank(message = "content는 필수입니다.")
+    private String content;
+}
