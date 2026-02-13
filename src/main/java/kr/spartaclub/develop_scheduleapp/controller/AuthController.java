@@ -2,6 +2,8 @@ package kr.spartaclub.develop_scheduleapp.controller;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import kr.spartaclub.develop_scheduleapp.exception.CustomException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import kr.spartaclub.develop_scheduleapp.dto.LoginRequest;
@@ -24,7 +26,7 @@ public class AuthController {
                 .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다."));
 
         if (!user.getPassword().equals(request.getPassword())) {
-            throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
         // 로그인 성공: 세션에 로그인 유저 id 저장

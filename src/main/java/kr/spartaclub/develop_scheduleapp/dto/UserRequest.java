@@ -9,7 +9,9 @@ import lombok.Getter;
 public class UserRequest {
 
     @NotBlank(message = "username은 필수입니다.")
+    @Size(max = 4, message = "username은 4글자 이내여야 합니다.")
     private String username;
+
 
     @Email(message = "email 형식이 올바르지 않습니다.")
     @NotBlank(message = "email은 필수입니다.")

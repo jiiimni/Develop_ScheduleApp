@@ -3,6 +3,7 @@ package kr.spartaclub.develop_scheduleapp.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 
@@ -12,7 +13,9 @@ import lombok.Getter;
 public class ScheduleRequest {
 
     @NotBlank(message = "title은 필수입니다.")
+    @Size(max = 10, message = "title은 10글자 이내여야 합니다.")
     private String title;
+
 
     @NotBlank(message = "content는 필수입니다.")
     private String content;

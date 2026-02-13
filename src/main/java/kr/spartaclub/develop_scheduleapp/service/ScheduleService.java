@@ -11,9 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.spartaclub.develop_scheduleapp.entity.User;
 import kr.spartaclub.develop_scheduleapp.repository.UserRepository;
 
+import kr.spartaclub.develop_scheduleapp.exception.CustomException;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
-
 
 @RequiredArgsConstructor
 @Service
@@ -26,12 +27,11 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponse create(Long loginUserId, ScheduleRequest request) {
         User user = userRepository.findById(loginUserId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다. id=" + loginUserId));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다. id=" + loginUserId));
 
         Schedule saved = scheduleRepository.save(new Schedule(user, request.getTitle(), request.getContent()));
         return new ScheduleResponse(saved);
     }
-
 
     // 전체 조회
     @Transactional(readOnly = true)
@@ -46,8 +46,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public ScheduleResponse findOne(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "해당 일정이 존재하지 않습니다. id=" + id));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "해당 일정이 존재하지 않습니다. id=" + id));
 
         return new ScheduleResponse(schedule);
     }
@@ -56,8 +55,7 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponse update(Long id, ScheduleUpdateRequest request) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "해당 일정이 존재하지 않습니다. id=" + id));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "해당 일정이 존재하지 않습니다. id=" + id));
 
         schedule.update(request.getTitle(), request.getContent());
 
@@ -68,8 +66,7 @@ public class ScheduleService {
     @Transactional
     public void delete(Long id) {
         if (!scheduleRepository.existsById(id)) {
-            throw new IllegalArgumentException(
-                    "해당 일정이 존재하지 않습니다. id=" + id);
+            throw new CustomException(HttpStatus.NOT_FOUND, "해당 일정이 존재하지 않습니다. id=" + id);
         }
         scheduleRepository.deleteById(id);
     }

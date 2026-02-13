@@ -2,6 +2,8 @@ package kr.spartaclub.develop_scheduleapp.controller;
 
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpSession;
+import kr.spartaclub.develop_scheduleapp.exception.CustomException;
+import org.springframework.http.HttpStatus;
 import kr.spartaclub.develop_scheduleapp.dto.ScheduleRequest;
 import kr.spartaclub.develop_scheduleapp.dto.ScheduleResponse;
 import kr.spartaclub.develop_scheduleapp.dto.ScheduleUpdateRequest;
@@ -22,11 +24,11 @@ public class ScheduleController {
 
     // 일정 생성
     @PostMapping
-    public ResponseEntity<ScheduleResponse> create(@RequestBody ScheduleRequest request, HttpSession session) {
+    public ResponseEntity<ScheduleResponse> create(@Valid @RequestBody ScheduleRequest request, HttpSession session) {
 
         Long loginUserId = (Long) session.getAttribute(AuthController.LOGIN_USER_ID);
         if (loginUserId == null) {
-            throw new IllegalArgumentException("로그인이 필요합니다.");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
         }
 
         return ResponseEntity.ok(scheduleService.create(loginUserId, request));

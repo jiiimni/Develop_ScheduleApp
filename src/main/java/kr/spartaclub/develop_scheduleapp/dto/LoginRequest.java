@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class LoginRequest {
 
-    @Email
+    @Email(message = "email 형식이 올바르지 않습니다.")
     @NotBlank(message = "email은 필수입니다.")
     private String email;
 
