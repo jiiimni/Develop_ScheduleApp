@@ -1,5 +1,6 @@
 package kr.spartaclub.develop_scheduleapp.service;
 
+import kr.spartaclub.develop_scheduleapp.config.PasswordEncoder;
 import kr.spartaclub.develop_scheduleapp.dto.UserRequest;
 import kr.spartaclub.develop_scheduleapp.dto.UserResponse;
 import kr.spartaclub.develop_scheduleapp.dto.UserUpdateRequest;
@@ -19,6 +20,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UserResponse create(UserRequest request) {
@@ -26,12 +28,14 @@ public class UserService {
             throw new CustomException(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
         }
 
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         User saved = userRepository.save(
                 new User(
                         request.getUsername(),
                         request.getEmail(),
-                        request.getPassword()
+                        encodedPassword
                 )
         );
 

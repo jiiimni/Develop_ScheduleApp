@@ -1,6 +1,7 @@
 package kr.spartaclub.develop_scheduleapp.controller;
 
 import jakarta.servlet.http.HttpSession;
+import kr.spartaclub.develop_scheduleapp.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import kr.spartaclub.develop_scheduleapp.exception.CustomException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class AuthController {
     public static final String LOGIN_USER_ID = "LOGIN_USER_ID";
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request, HttpSession session) {
@@ -25,7 +27,7 @@ public class AuthController {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다."));
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new CustomException(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
